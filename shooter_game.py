@@ -1,16 +1,18 @@
+
+
 from pygame import * 
 from random import randint 
 from time import time as timer
- 
- 
- 
+
+
+
 win_width = 500 
 win_height = 500 
 window = display.set_mode((win_width, win_height)) 
- 
- 
+
+
 class GameSprite(sprite.Sprite): 
-  
+
     def __init__(self, player_image, player_x, player_y, player_speed): 
         super().__init__() 
         self.image = transform.scale(image.load(player_image), (65, 65)) 
@@ -18,7 +20,7 @@ class GameSprite(sprite.Sprite):
         self.rect = self.image.get_rect() 
         self.rect.x = player_x 
         self.rect.y = player_y 
-  
+
     def reset(self): 
         window.blit(self.image, (self.rect.x, self.rect.y)) 
 
@@ -62,60 +64,87 @@ class Enemy(GameSprite):
            self.direction = "right"
        if self.rect.x >= win_width - 85:
            self.direction = "left"
- 
+
        if self.direction == "left":
            self.rect.x -= self.speed
        else:
            self.rect.x += self.speed
-   
+
 fon = transform.scale(image.load("fon.jpg"),(500,500)) 
 racket = Player('pi.png', 5, win_width - 80,4) 
 racket2 = Player('po.png', 435, win_width - 80,4) 
 ball = Player('balll.png',80,80,win_width - 34) 
 smert = transform.scale(image.load("red.jpg"),(250,500))
+score = 0 
+lost = 0
+font.init()
+font = font.Font(None,35)
+win = font.render("you win ",True,(255,215,0))
+lose = font.render("you lose",True,(5,105,60))
 
- 
+text = font.render("Cчет: "+ str (score),1,(222,222,0))
+window.blit(fon,(0,0))
+window.blit(text,(10,20))
+finish = False
 speed_x = 3
 speed_y = 2
 run = True 
 clock = time.Clock() 
 FPS = 60 
 while run: 
-     
+
     for i in event.get(): 
         if i.type == QUIT: 
             run = False 
- 
-    ball.rect.x += speed_x
-    ball.rect.y += speed_y
+
+   
 
     window.blit(fon,(0,0))
     
 
 
-    if ball.rect.y > win_height - 50 or ball.rect.y < 0:
-        speed_y *= -1
-        speed_x *= 1
-    if ball.rect.y > win_height - -50 or ball.rect.y < 0:
-        speed_y *= 1
-        speed_x *= 1
-    if sprite.collide_rect(racket,ball) or sprite.collide_rect(racket2,ball):
-        speed_y *= 1
-        speed_x *= -1
-    if ball.rect.x >= 500:
-        window.blit(smert,(250,0))
-        ball.rect.y = 250
-        ball.rect.x = 250
-    if ball.rect.x <= -0:
-        window.blit(smert,(0,0))
-        ball.rect.y = 250
-        ball.rect.x = 250
-    ball.reset()
-    racket.update()
-    racket.reset()
-    racket2.update2()
-    racket2.reset()  
 
+    if finish != True:
+        window.blit(fon,(0, 0))
+         
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+
+        if score >= 5:
+            window.blit(fon,(0,0))
+            window.blit(win,(225,200))
+            
+        
+
+
+        if ball.rect.y > win_height - 50 or ball.rect.y < 0:
+            speed_y *= -1
+            speed_x *= 1
+        if ball.rect.y > win_height - -50 or ball.rect.y < 0:
+            speed_y *= 1
+            speed_x *= 1
+        if sprite.collide_rect(racket,ball) or sprite.collide_rect(racket2,ball):
+            speed_y *= 1
+            speed_x *= -1
+        if ball.rect.x >= 500:
+            window.blit(smert,(250,0))
+            ball.rect.y = 250
+            ball.rect.x = 250
+        if ball.rect.x <= -0:
+            window.blit(smert,(0,0))
+            ball.rect.y = 250
+            ball.rect.x = 250
+        ball.reset()
+        racket.update()
+        racket.reset()
+        racket2.update2()
+        racket2.reset()  
+    if ball.rect.x >= 455:
+        window.blit(lose,(200,200))
+        window.blit(smert,(500,500))
+    
+
+        finish = True
 
     display.update() 
     clock.tick(FPS)
